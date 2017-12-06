@@ -15,23 +15,15 @@
       {% block content_title %}
       {% endblock content_title %}
       {% for article in articles_page.object_list %}
-      <article>
-        {% macro header() %}{% include "article_header.html" %}{% endmacro %}
-        {{ header()|indent(8) }}
-        {% if loop.first and articles_page.number == 1 %}
-        <div class="m-clearfix-l"></div>
-<!-- content -->
-{{ article.content }}
-<!-- /content -->
-        {% endif %}
-        <footer>
-          {% macro footer() %}{% include "article_footer.html" %}{% endmacro %}
-          {{ footer()|indent(10) }}
-        </footer>
-        {% if not loop.first or articles_page.number != 1 %}
-        <div class="m-clearfix-l"></div>
-        {% endif %}
-      </article>
+        <article>
+            {% macro header() %}{% include "article_header.html" %}{% endmacro %}
+            {{ header()|indent(8) }}
+            <div class="m-clearfix-l"></div>
+            <footer>
+                {% macro footer() %}{% include "article_footer.html" %}{% endmacro %}
+                {{ footer()|indent(10) }}
+            </footer>
+        </article>
       {% endfor %}
       {% if articles_page.has_other_pages() %}
       {% macro pagination() %}{% include 'pagination.html' %}{% endmacro %}

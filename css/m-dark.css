@@ -35,11 +35,11 @@
   --link-decoration: underline;
   --link-decoration-nav: none;
   --link-decoration-heading: none;
-  --nav-brand-case: uppercase;
+  --nav-brand-case: none;
   --nav-menu-case: none;
-  --nav-heading-case: uppercase;
+  --nav-heading-case: none;
   --nav-categories-case: lowercase;
-  --nav-heading-case: uppercase;
+  --nav-heading-case: none;
   --nav-categories-case: lowercase;
   --heading-font-weight: bold;
 

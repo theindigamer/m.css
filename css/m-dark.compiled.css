@@ -416,7 +416,7 @@ ul ol, ul ul, ol ol, ol ul {
   margin-bottom: 0;
 }
 main p {
-  text-indent: 1.5rem;
+  text-indent: 0;
   text-align: justify;
 }
 main p.m-noindent {
@@ -533,7 +533,7 @@ body > header > nav a {
   color: #ffffff;
 }
 body > header > nav a#m-navbar-brand, body > header > nav a#m-navbar-show, body > header > nav a#m-navbar-hide {
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: bold;
   font-size: 1.125rem;
   line-height: 3rem;
@@ -673,7 +673,7 @@ body > footer > nav {
   background-color: #444e5c;
 }
 body > footer > nav h3, body > footer > nav h3 a {
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: normal;
 }
 body > footer > nav ul {
@@ -843,7 +843,7 @@ nav.m-navpanel {
   text-align: center;
 }
 nav.m-navpanel h3 {
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: normal;
 }
 nav.m-navpanel ol {
