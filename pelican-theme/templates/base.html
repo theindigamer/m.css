@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{% if page and page.lang %}{{ page.lang }}{% elif article and article.lang %}{{ article.lang }}{% else %}{{ DEFAULT_LANG }}{%endif %}">
+<link rel="icon" href="/favicon.gif">
 <head>
   {% block head %}
   <meta charset="UTF-8" />
