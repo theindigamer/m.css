@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -22,15 +22,15 @@
     DEALINGS IN THE SOFTWARE.
 ..
 
-Links
-#####
+Links and other
+###############
 
 :breadcrumb: {filename}/plugins.rst Pelican plugins
 :footer:
     .. note-dim::
         :class: m-text-center
 
-        `« Math and code <{filename}/plugins/math-and-code.rst>`_ | `Pelican plugins <{filename}/plugins.rst>`_
+        `« Math and code <{filename}/plugins/math-and-code.rst>`_ | `Pelican plugins <{filename}/plugins.rst>`_ | `Metadata » <{filename}/plugins/metadata.rst>`_
 
 .. role:: py(code)
     :language: py
@@ -110,14 +110,16 @@ including the ``m/`` directory into one of your :py:`PLUGIN_PATHS` and add
     PLUGINS += ['m.gl']
 
 Use the :rst:`:glfn:` interpreted text role for linking to functions,
-:rst:`:glext:` for linking to extensions and :rst:`:glfnext:` for linking to
-extension functions. In the link target the leading ``gl`` prefix of functions
-and the leading ``GL_`` prefix of extensions is prepended automatically.
+:rst:`:glext:` for linking to OpenGL / OpenGL ES extensions, :rst:`:webglext:`
+for linking to WebGL extensions and :rst:`:glfnext:` for linking to extension
+functions. In the link target the leading ``gl`` prefix of functions and the
+leading ``GL_`` prefix of extensions is prepended automatically.
 
 Link text is equal to full function name including the ``gl`` prefix and
 ``()`` for functions, equal to extension name or equal to extension function
-link, including the vendor suffix. For :rst:`:glfn:` and :rst:`:glext:` it's
-possible to specify alternate link text using the well-known syntax.
+link, including the vendor suffix. For :rst:`:glfn:`, :rst:`:glext:` and
+:rst:`:webglext:` it's possible to specify alternate link text using the
+well-known syntax.
 
 .. code-figure::
 
@@ -125,11 +127,13 @@ possible to specify alternate link text using the well-known syntax.
 
         -   Function link: :glfn:`DispatchCompute`
         -   Extension link: :glext:`ARB_direct_state_access`
+        -   WebGL extension link: :webglext:`OES_texture_float`
         -   Extension function link: :glfnext:`SpecializeShader <ARB_gl_spirv>`
         -   :glfn:`Custom link title <DrawElementsIndirect>`
 
     -   Function link: :glfn:`DispatchCompute`
     -   Extension link: :glext:`ARB_direct_state_access`
+    -   WebGL extension link: :webglext:`OES_texture_float`
     -   Extension function link: :glfnext:`SpecializeShader <ARB_gl_spirv>`
     -   :glfn:`Custom link title <DrawElementsIndirect>`
 
@@ -153,13 +157,22 @@ work. Example configuration:
 
 Use the :rst:`:dox:` interpreted text role for linking to documented symbols.
 All link targets understood by Doxygen's ``@ref`` or ``@link`` commands are
-understood by this plugin as well. In order to save you some typing, the
-leading namespace(s) mentioned in the :py:`M_DOX_TAGFILES` setting can be
-omitted when linking to given symbol. If a symbol can't be found, a warning is
-printed to output and the link text is rendered in monospace font.
+understood by this plugin as well, in addition it's possible to link to the
+documentation index page by specifying the tag file basename w/o extension as
+link target. In order to save you some typing, the leading namespace(s)
+mentioned in the :py:`M_DOX_TAGFILES` setting can be omitted when linking to
+given symbol.
 
-Link text is equal to link target in all cases. It's possible to specify
-alternate link text using the :rst:`:dox:`link text <link-target>`` syntax.
+Link text is equal to link target in all cases except for pages and sections,
+where page/section title is extracted from the tagfile. It's possible to
+specify custom link title using the :rst:`:dox:`link title <link-target>``
+syntax. If a symbol can't be found, a warning is printed to output and link
+target is rendered in monospace font (or, if custom link title is specified,
+just the title is rendered, as normal text). You can append ``#anchor`` to
+``link-target`` to link to anchors that are not present in the tag file (such
+as ``#details`` for the detailed docs or ``#pub-methods`` for jumping straight
+to a list of public member functions), the same works for query parameters
+starting with ``?``.
 
 .. code-figure::
 
@@ -169,11 +182,21 @@ alternate link text using the :rst:`:dox:`link text <link-target>`` syntax.
         -   Class link: :dox:`Interconnect::Emitter`
         -   Page link: :dox:`building-corrade`
         -   :dox:`Custom link title <testsuite>`
+        -   :dox:`Link to documentation index page <corrade>`
+        -   :dox:`Link to an anchor <Interconnect::Emitter#pub-methods>`
 
     -   Function link: :dox:`Utility::Directory::mkpath()`
     -   Class link: :dox:`Interconnect::Emitter`
     -   Page link: :dox:`building-corrade`
     -   :dox:`Custom link title <testsuite>`
+    -   :dox:`Link to documentation index page <corrade>`
+    -   :dox:`Link to an anchor <Interconnect::Emitter#pub-methods>`
+
+.. note-success::
+
+    If you haven't noticed yet, m.css also provides a
+    `full-featured Doxygen theme <{filename}/doxygen.rst>`_ with first-class
+    search functionality. Check it out!
 
 `Abbreviations`_
 ================
@@ -239,3 +262,44 @@ first before calculating the size.
     :filesize:`{filename}/../css/m-dark.compiled.css` but only
     :filesize-gz:`{filename}/../css/m-dark.compiled.css` when the server
     sends it compressed.
+
+`Aliases`_
+==========
+
+Site content almost never stays on the same place for extended periods of time
+and preserving old links for backwards compatibility is a vital thing for user
+friendliness. This plugin allows you to create a redirect alias URLs for your
+pages and articles.
+
+Download the `m/alias.py <{filename}/plugins.rst>`_ file, put it
+including the ``m/`` directory into one of your :py:`PLUGIN_PATHS` and add
+:py:`m.alias` package to your :py:`PLUGINS` in ``pelicanconf.py``. This plugin
+assumes presence of `m.htmlsanity <{filename}/plugins/htmlsanity.rst>`_.
+
+.. code:: python
+
+    PLUGINS += ['m.htmlsanity', 'm.alias']
+
+.. note-success::
+
+    This plugin is loosely inspired by :gh:`Nitron/pelican-alias`, © 2013
+    Christopher Williams, licensed under
+    :gh:`MIT <Nitron/pelican-alias$master/LICENSE.txt>`.
+
+Use the :rst:`:alias:` field to specify one or more locations that should
+redirect to your article / page. Each line is treated as one alias, the
+locations have to begin with ``/`` and are relative to the Pelican output
+directory, each of them contains just a :html:`<meta http-equiv="refresh" />`
+that points to a fully-qualified URL of the article or page.
+
+If the alias ends with ``/``, the redirector file is saved into ``index.html``
+in given directory.
+
+.. code:: rst
+
+    My Article
+    ##########
+
+    :alias:
+        /2018/05/06/old-version-of-the-article/
+        /even-older-version-of-the-article.html

@@ -1,7 +1,7 @@
 #
 #   This file is part of m.css.
 #
-#   Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+#   Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 #
 #   Permission is hereby granted, free of charge, to any person obtaining a
 #   copy of this software and associated documentation files (the "Software"),
@@ -28,6 +28,8 @@ from docutils import nodes, utils
 from docutils.parsers import rst
 from pelican import signals
 import xml.etree.ElementTree as ET
+import os
+import re
 
 import logging
 
@@ -35,15 +37,31 @@ logger = logging.getLogger(__name__)
 
 symbol_mapping = {}
 symbol_prefixes = ['']
+tagfile_basenames = []
+
+# Modified from __init__ to add support for queries and hashes
+link_regexp = re.compile(r'(?P<title>.*) <(?P<link>[^?#]+)(?P<hash>[?#].+)?>')
+
+def parse_link(text):
+    link = utils.unescape(text)
+    m = link_regexp.match(link)
+    if m:
+        title, link, hash = m.group('title', 'link', 'hash')
+        if not hash: hash = '' # it's None otherwise
+    else:
+        title, hash = '', ''
+
+    return title, link, hash
 
 def init(pelicanobj):
-    global symbol_mapping, symbol_prefixes
+    global symbol_mapping, symbol_prefixes, tagfile_basenames
 
     tagfiles = pelicanobj.settings.get('M_DOX_TAGFILES', [])
 
     # Pre-round to populate subclasses
 
     for tagfile, path, prefixes in tagfiles:
+        tagfile_basenames += [(os.path.splitext(os.path.basename(tagfile))[0], path)]
         symbol_prefixes += prefixes
 
         tree = ET.parse(tagfile)
@@ -53,65 +71,88 @@ def init(pelicanobj):
                 # Linking to pages
                 if child.attrib['kind'] == 'page':
                     link = path + child.find('filename').text + '.html'
-                    symbol_mapping[child.find('name').text] = link
-
-                    # Page sections
-                    for section in child.findall('docanchor'):
-                        symbol_mapping[section.text] = link + '#' + section.text
+                    symbol_mapping[child.find('name').text] = (child.find('title').text, link)
 
                 # Linking to files
                 if child.attrib['kind'] == 'file':
                     link = path + child.find('filename').text + ".html"
-                    symbol_mapping[child.find('path').text + child.find('name').text] = link
+                    symbol_mapping[child.find('path').text + child.find('name').text] = (None, link)
 
                     for member in child.findall('member'):
                         if not 'kind' in member.attrib: continue
 
                         # Preprocessor defines and macros
                         if member.attrib['kind'] == 'define':
-                            symbol_mapping[member.find('name').text + ('()' if member.find('arglist').text else '')] = link + '#' + member.find('anchor').text
+                            symbol_mapping[member.find('name').text + ('()' if member.find('arglist').text else '')] = (None, link + '#' + member.find('anchor').text)
 
                 # Linking to namespaces, structs and classes
                 if child.attrib['kind'] in ['class', 'struct', 'namespace']:
-                    symbol_mapping[child.find('name').text] = path + child.find('filename').text
                     name = child.find('name').text
-                    link = path + child.find('filename').text
-                    symbol_mapping[name] = link
+                    link = path + child.findtext('filename') # <filename> can be empty (cppreference tag file)
+                    symbol_mapping[name] = (None, link)
                     for member in child.findall('member'):
                         if not 'kind' in member.attrib: continue
 
                         # Typedefs, constants
                         if member.attrib['kind'] == 'typedef' or member.attrib['kind'] == 'enumvalue':
-                            symbol_mapping[name + '::' + member.find('name').text] = link + '#' + member.find('anchor').text
+                            symbol_mapping[name + '::' + member.find('name').text] = (None, link + '#' + member.find('anchor').text)
 
                         # Functions
                         if member.attrib['kind'] == 'function':
-                            symbol_mapping[name + '::' + member.find('name').text + "()"] = link + '#' + member.find('anchor').text
+                            # <filename> can be empty (cppreference tag file)
+                            symbol_mapping[name + '::' + member.find('name').text + "()"] = (None, link + '#' + member.findtext('anchor'))
 
                         # Enums with values
                         if member.attrib['kind'] == 'enumeration':
                             enumeration = name + '::' + member.find('name').text
-                            symbol_mapping[enumeration] = link + '#' + member.find('anchor').text
+                            symbol_mapping[enumeration] = (None, link + '#' + member.find('anchor').text)
 
                             for value in member.findall('enumvalue'):
-                                symbol_mapping[enumeration + '::' + value.text] = link + '#' + value.attrib['anchor']
+                                symbol_mapping[enumeration + '::' + value.text] = (None, link + '#' + value.attrib['anchor'])
+
+                # Sections
+                for section in child.findall('docanchor'):
+                    symbol_mapping[section.text] = (section.attrib.get('title', ''), link + '#' + section.text)
 
 def dox(name, rawtext, text, lineno, inliner: Inliner, options={}, content=[]):
-    title, target = parse_link(text)
-    if not title: title = target
+    title, target, hash = parse_link(text)
+
+    # Try linking to the whole docs first
+    for basename, url in tagfile_basenames:
+        if basename == target:
+            if not title:
+                # TODO: extract title from index page in the tagfile
+                logger.warning("Link to main page `{}` requires a title".format(target))
+                title = target
+
+            node = nodes.reference(rawtext, title, refuri=url + hash, **options)
+            return [node], []
 
     for prefix in symbol_prefixes:
         if prefix + target in symbol_mapping:
-            url = symbol_mapping[prefix + target]
-            node = nodes.reference(rawtext, title, refuri=url, **options)
+            link_title, url = symbol_mapping[prefix + target]
+            if title:
+                use_title = title
+            elif link_title:
+                use_title = link_title
+            else:
+                if link_title is not None:
+                    logger.warning("Doxygen anchor `{}` has no title, using its ID as link title".format(target))
+
+                use_title = target
+            node = nodes.reference(rawtext, use_title, refuri=url + hash, **options)
             return [node], []
 
     # TODO: print file and line
     #msg = inliner.reporter.warning(
         #'Doxygen symbol %s not found' % target, line=lineno)
     #prb = inliner.problematic(rawtext, rawtext, msg)
-    logger.warning('Doxygen symbol `%s` not found, rendering as monospace' % target)
-    node = nodes.literal(rawtext, title, **options)
+    if title:
+        logger.warning("Doxygen symbol `{}` not found, rendering just link title".format(target))
+        node = nodes.inline(rawtext, title, **options)
+    else:
+        logger.warning("Doxygen symbol `{}` not found, rendering as monospace".format(target))
+        node = nodes.literal(rawtext, target, **options)
     return [node], []
 
 def register():

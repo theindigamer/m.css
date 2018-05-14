@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -137,6 +137,12 @@ but the CSS class can be used on any block element.
           </div>
         </div>
 
+.. note-info::
+
+    The `Pelican Components plugin <{filename}/plugins/components.rst#blocks-notes-frame>`__
+    is able to produce blocks conveniently using :rst:`.. block-::` directives
+    in your :abbr:`reST <reStructuredText>` markup.
+
 `Badges`_
 =========
 
@@ -166,6 +172,11 @@ Only :html:`<h3>` is supported for a badge.
           <a href="https://twitter.com/czmosra">on Twitter</a> if you want to
           get notified when he gets a better avatar.</p>
         </div>
+
+.. note-info::
+
+    The `Pelican Metadata plugin <{filename}/plugins/metadata.rst>`_  is able
+    to automatically render author and category badges for articles.
 
 `Notes, frame`_
 ===============
@@ -245,6 +256,12 @@ semantic purposes, but the CSS classes can be used on any block element.
           </div>
         </div>
 
+.. note-info::
+
+    Notes and frames can be created conveniently using :rst:`.. note-::` and
+    :rst:`.. frame::` directives in your :abbr:`reST <reStructuredText>` markup
+    using the `Pelican Components plugin <{filename}/plugins/components.rst#blocks-notes-frame>`__.
+
 `Text`_
 =======
 
@@ -284,6 +301,12 @@ paragraph or inline text.
             <p class="m-text m-dim m-noindent">Dim text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices a erat eu suscipit. Aliquam pharetra imperdiet tortor sed vehicula. <a href="#">Link.</a></p>
           </div>
         </div>
+
+.. note-info::
+
+    Colored text paragraphs can be conveniently created using :rst:`.. text-::`
+    directives in your :abbr:`reST <reStructuredText>` markup using the
+    `Pelican Components plugin <{filename}/plugins/components.rst#text>`__.
 
 Apply :css:`.m-small` or :css:`.m-big` CSS class together with :css:`.m-text`
 to make the text appear smaller or larger.
@@ -329,40 +352,43 @@ without using those particular tags.
 
 To highlight important links such as file download, you can style them as
 buttons. Use :css:`.m-button` CSS class together with desired color class on an
-:html:`<a>` tag. The button is by default displayed as inline block, either
-wrap it in :css:`.m-text-center` etc. :html:`<div>` to make it centered or
-apply a :css:`.m-fullwidth` class to it to display it as a full-width block
-with center-aligned label.
+:html:`<a>` tag. Use :css:`.m-flat` instead of a color class to make the button
+flat. It is then styled similarly to a link, but with bigger padding around.
+The button is by default centered, apply a :css:`.m-fullwidth` class to it to
+display it as a full-width block with center-aligned label.
 
 .. code-figure::
 
     .. code:: html
 
-        <a class="m-button m-success" href="#">Success button</a>
+        <div class="m-button m-success m-fullwidth"><a href="#">Success button</a></div>
 
     .. raw:: html
 
         <div class="m-row">
           <div class="m-col-m-3 m-col-s-6">
-            <a class="m-button m-default m-fullwidth" href="#">Default button</a>
+            <div class="m-button m-default m-fullwidth"><a href="#">Default button</a></div>
           </div>
           <div class="m-col-m-3 m-col-s-6">
-            <a class="m-button m-primary m-fullwidth" href="#">Primary button</a>
+            <div class="m-button m-primary m-fullwidth"><a href="#">Primary button</a></div>
           </div>
           <div class="m-col-m-3 m-col-s-6">
-            <a class="m-button m-success m-fullwidth" href="#">Success button</a>
+            <div class="m-button m-success m-fullwidth"><a href="#">Success button</a></div>
           </div>
           <div class="m-col-m-3 m-col-s-6">
-            <a class="m-button m-warning m-fullwidth" href="#">Warning button</a>
+            <div class="m-button m-warning m-fullwidth"><a href="#">Warning button</a></div>
           </div>
           <div class="m-col-m-3 m-col-s-6">
-            <a class="m-button m-danger m-fullwidth" href="#">Danger button</a>
+            <div class="m-button m-danger m-fullwidth"><a href="#">Danger button</a></div>
           </div>
           <div class="m-col-m-3 m-col-s-6">
-            <a class="m-button m-info m-fullwidth" href="#">Info button</a>
+            <div class="m-button m-info m-fullwidth"><a href="#">Info button</a></div>
           </div>
           <div class="m-col-m-3 m-col-s-6">
-            <a class="m-button m-dim m-fullwidth" href="#">Dim button</a>
+            <div class="m-button m-dim m-fullwidth"><a href="#">Dim button</a></div>
+          </div>
+          <div class="m-col-m-3 m-col-s-6">
+            <div class="m-button m-flat m-fullwidth"><a href="#">Flat button</a></div>
           </div>
         </div>
 
@@ -373,8 +399,8 @@ class inside the :html:`<a>` to achieve the following effect:
 
     .. code:: html
 
-        <div class="m-text-center">
-          <a class="m-button m-primary" href="#">
+        <div class="m-button m-primary">
+          <a href="#">
             <div class="m-big">Download the thing</div>
             <div class="m-small">Any platform, 5 kB.</div>
           </a>
@@ -382,12 +408,18 @@ class inside the :html:`<a>` to achieve the following effect:
 
     .. raw:: html
 
-        <div class="m-text-center">
-          <a class="m-button m-primary" href="#">
+        <div class="m-button m-primary">
+          <a href="#">
             <div class="m-big">Download the thing</div>
             <div class="m-small">Any platform, 5 kB.</div>
           </a>
         </div>
+
+.. note-info::
+
+    Buttons can be conveniently created using :rst:`.. button-::` directives in
+    your :abbr:`reST <reStructuredText>` markup using the
+    `Pelican Components plugin <{filename}/plugins/components.rst#button-links>`__.
 
 `Labels`_
 =========
@@ -488,9 +520,10 @@ bold, all :html:`<th>` and :html:`<td>` are aligned to left while table
         </table>
 
 Rows are highlighted on hover, if you want to disable that, put :css:`.m-flat`
-CSS class on the :html:`<table>` element. Similarly to other components, you
-can color particular :html:`<tr>` or :html:`<td>` elements using the color
-classes from above:
+CSS class on the :html:`<table>` element. You can also put :css:`.m-thin` onto
+:html:`<th>` elements to remove the bold styling. Similarly to other
+components, you can color particular :html:`<tr>` or :html:`<td>` elements
+using the color classes from above:
 
 .. raw:: html
 
@@ -562,13 +595,20 @@ classes from above:
       </tbody>
     </table></div>
 
+Mark the table with :html:`.m-big` to inflate it with more spacing, for example
+when designing a high-level product category overview.
+
+Similarly to `lists <{filename}/css/typography.rst#lists-diaries>`_, if using
+:html:`<p>` elements inside :html:`<td>`, they are neither indented nor
+justified.
+
 `Images`_
 =========
 
-Putting :css:`.m-image` class onto the :html:`<img>` tag makes it centered,
-slightly rounded and sets its max width to 100%. Adding :css:`.m-fullwidth` on
-the image element works as expected. For accessibility reasons it's a good
-practice to include the ``alt`` attribute.
+Putting :css:`.m-image` class onto an :html:`<img>` / :html:`<svg>` tag makes
+the image centered, slightly rounded and sets its max width to 100%. Adding
+:css:`.m-fullwidth` on the image element works as expected. For accessibility
+reasons it's a good practice to include the ``alt`` attribute.
 
 .. code-figure::
 
@@ -599,6 +639,12 @@ not the surrounding area:
           <a href="{filename}/static/flowers.jpg"><img src="{filename}/static/flowers-small.jpg" /></a>
         </div>
 
+.. note-info::
+
+    Images can be conveniently created with an :rst:`.. image::` directive in
+    your :abbr:`reST <reStructuredText>` markup using the
+    `Pelican Images plugin <{filename}/plugins/images.rst>`_.
+
 `Figures`_
 ==========
 
@@ -613,6 +659,8 @@ wrapped in some tag as well (for example a :html:`<span>`). The
 Figure always expects at least the caption to be present. If you want just an
 image, use the plain image tag. If you have a lot of figures on the page and
 the border is distracting, apply the :css:`.m-flat` class to hide it.
+Optionally you can color the figure border and caption by adding one of the
+`CSS color classes <#colors>`_ to the :html:`<figure>` element.
 
 .. code-figure::
 
@@ -631,6 +679,12 @@ the border is distracting, apply the :css:`.m-flat` class to hide it.
           <figcaption>A Ship</figcaption>
           <span>Photo © <a href="http://blog.mosra.cz/">The Author</a></span>
         </figure>
+
+.. note-info::
+
+    Figures can be conveniently created with a :rst:`.. figure::` directive in
+    your :abbr:`reST <reStructuredText>` markup using the
+    `Pelican Images plugin <{filename}/plugins/images.rst>`_.
 
 `Image grid`_
 =============
@@ -733,10 +787,10 @@ Then, percentage width :math:`p_i` of each image is calculated as:
 
     p_i = W \cfrac{w_i}{h_i} \cdot 100 \%
 
-.. note-info::
+.. note-success::
 
-    The image width calculation is quite annoying to do manually, that's why
-    m.css provides a `Pelican plugin <{filename}/plugins/images.rst#image-grid>`_
+    The image width calculation is quite annoying to do manually and so there's
+    an :rst:`.. image-grid::` directive in the `Pelican Image plugin <{filename}/plugins/images.rst#image-grid>`_
     that does the hard work for you.
 
 `Code`_
@@ -817,10 +871,10 @@ instead of :html:`<pre>`:
 
 .. note-success::
 
-    To make your life easier, m.css provides a
-    `Pelican plugin <{filename}/plugins/math-and-code.rst#code>`__ that
-    integrates Pygments code highlighting as a :abbr:`reST <reStructuredText>`
-    directive.
+    To make your life easier, the `Pelican Code plugin <{filename}/plugins/math-and-code.rst#code>`__
+    integrates Pygments code highlighting as a :rst:`.. code::`
+    :abbr:`reST <reStructuredText>` directive and a :rst:`:code:` inline text
+    role.
 
 `Colored terminal output`_
 ==========================
@@ -834,7 +888,7 @@ file or use it directly from your Git clone of m.css. Example usage:
 
 .. code:: sh
 
-    ls -C --color=always | pygmentize -l pelican-plugins/m/ansilexer.py:AnsiLexer -x -f html -O nowrap
+    ls -C --color=always | pygmentize -l pelican-plugins/ansilexer.py:AnsiLexer -x -f html -O nowrap
 
 Wrap the HTML output in either :html:`<pre class="m-console">` for a block
 listing or :html:`<code class="m-console">` for inline listing. The output
@@ -854,7 +908,7 @@ might then look similarly to this:
 
 .. note-success::
 
-    The Pelican plugin mentioned above is able to do
+    The Pelican Code plugin mentioned above is able to do
     `colored console highlighting as well <{filename}/plugins/math-and-code.rst#colored-terminal-output>`_.
 
 `Code figure`_
@@ -895,6 +949,12 @@ It's also possible to have matching border for a console output. Just use
 :css:`.m-console-figure` instead of :css:`.m-code-figure` on the :html:`<figure>`
 element.
 
+.. note-info::
+
+    Code figures can be conveniently created with a :rst:`.. code-figure::`
+    directive in your :abbr:`reST <reStructuredText>` markup using the
+    `Pelican Components plugin <{filename}/plugins/components.rst#code-figure>`_.
+
 `Math`_
 =======
 
@@ -905,7 +965,7 @@ is simple:
 
 .. code:: sh
 
-    echo "$$ a^2 = b^2 + c^2 $$" | python pelican-plugins/m/latex2svg.py > formula.svg
+    echo "\$\$ a^2 = b^2 + c^2 \$\$" | python pelican-plugins/latex2svg.py > formula.svg
 
 The ``formula.svg`` file will then contain the rendered formula, which with
 some minor patching (removing the XML preamble etc.) can be pasted directly
@@ -996,11 +1056,13 @@ the ``depth`` value returned on stderr can be taken as a base for the
           </g>
         </svg> character.</p>
 
-.. note-warning::
+.. note-success::
 
-    Producing SVG manually using command-line tools is no fun, so m.css
-    provides a `Pelican plugin <{filename}/plugins/math-and-code.rst#math>`__
-    that integrates LaTeX math directly into your markup. Check it out!
+    Producing SVG manually using command-line tools is no fun. That's why the
+    :rst:`.. math::` directive and :rst:`:math:` inline text role in the
+    `Pelican Math plugin <{filename}/plugins/math-and-code.rst#math>`__
+    integrates LaTeX math directly into your :abbr:`reST <reStructuredText>`
+    markup for convenient content authoring.
 
 `Padding`_
 ==========
@@ -1008,7 +1070,8 @@ the ``depth`` value returned on stderr can be taken as a base for the
 Similarly to `typography elements <{filename}/css/typography.rst#padding>`_;
 blocks, notes, frames, tables, images, figures, image grids, code and math
 blocks and code figures have :css:`1rem` padding after, except when they are
-the last element, to avoid excessive spacing.
+the last element, to avoid excessive spacing. The list special casing applies
+here as well.
 
 `Responsive utilities`_
 =======================

@@ -1,7 +1,7 @@
 #
 #   This file is part of m.css.
 #
-#   Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+#   Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 #
 #   Permission is hereby granted, free of charge, to any person obtaining a
 #   copy of this software and associated documentation files (the "Software"),
@@ -40,7 +40,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from . import ansilexer
+import ansilexer
 
 def _highlight(code, language, options):
     # Use our own lexer for ANSI
@@ -173,6 +173,10 @@ class Include(docutils.parsers.rst.directives.misc.Include):
         return codeblock.run()
 
 def code(role, rawtext, text, lineno, inliner, options={}, content=[]):
+    # In order to properly preserve backslashes
+    i = rawtext.find('`')
+    text = rawtext.split('`')[1]
+
     set_classes(options)
     classes = []
     if 'classes' in options:

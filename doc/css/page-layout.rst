@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -44,6 +44,11 @@ Page layout
 
 Besides separate components, m.css provides a fully-fledged whole page layout,
 including top navigation bar, footer navigation, article styling and more.
+
+.. note-success::
+
+    The whole CSS page layout functionality is also available through a
+    `m.css Pelican theme <{filename}/pelican/theme.rst>`_. Check it out!
 
 .. contents::
     :class: m-block m-default
@@ -352,7 +357,7 @@ the fold", *not* the cover image.
 .. code:: html
 
     <main><article>
-      <div id="m-landing-image" style="background-image: url('ship.jpg');">
+      <div id="m-landing-image" style="background-image: url('landing.jpg');">
         <div id="m-landing-cover">
           <div class="m-container">
             <!-- content displayed over the cover image -->
@@ -378,6 +383,35 @@ similarly with the hamburger menu on small screen sizes.
 .. note-info::
 
     You can see landing page in action `on the main page <{filename}/index.rst>`_.
+
+`Pages with cover image`_
+-------------------------
+
+If you just want slide a cover image under content of your page and don't need
+to have control over what content is over the image and what under, simply put
+the following markup in front of your page content --- an outer
+:css:`#m-cover-image` element with background image and an inner empty
+:html:`<div>` that takes care of the fade out gradient over it.
+
+.. code:: html
+    :class: m-inverted
+    :hl_lines: 2 3 4
+
+    <main>
+      <div id="m-cover-image" style="background-image: url('cover.jpg');">
+        <div></div>
+      </div>
+      <article>
+        <div class="m-container">
+          <!-- the whole content of your page goes here -->
+        </div>
+      </article>
+    </main>
+
+.. note-info::
+
+    Real-world example of a page with cover image can be seen on the
+    `Magnum Engine website <http://magnum.graphics/features/>`_.
 
 `Breadcrumb navigation`_
 ------------------------
@@ -460,11 +494,11 @@ font. Example markup and corresponding rendering:
 
         <article>
           <header>
-            <h1><a href="#" rel="bookmark" title="Permalink to An Article">
+            <h1><a href="#" rel="bookmark" title="Permalink to An article">
               <time class="m-date" datetime="2017-09-08T00:00:00+02:00">
               Sep <span class="m-date-day">8</span> 2017
               </time>
-              An Article
+              An article
             </a></h1>
             <p>Article summary paragraph. Lorem ipsum dolor sit amet, consectetur
             adipiscing elit. Aenean id elit posuere, consectetur magna congue, sagittis
@@ -485,11 +519,11 @@ font. Example markup and corresponding rendering:
 
         <article>
           <header>
-            <h1><a href="#" rel="bookmark" title="Permalink to An Article">
+            <h1><a href="#" rel="bookmark" title="Permalink to An article">
               <time class="m-date" datetime="2017-09-08T00:00:00+02:00">
               Sep <span class="m-date-day">8</span> 2017
               </time>
-              An Article
+              An article
             </a></h1>
             <p>Article summary paragraph. Lorem ipsum dolor sit amet, consectetur
             adipiscing elit. Aenean id elit posuere, consectetur magna congue, sagittis
@@ -550,7 +584,7 @@ such as `image grid <{filename}/css/components.rst#image-grid>`_ possible.
               <div class="m-row">
                 <div class="m-col-t-12 m-col-s-10 m-push-s-1 m-col-m-8 m-push-m-2">
                   <h1><a href="#" rel="bookmark" title="Permalink to An Ar­ti­cle — a jum­bo one">
-                    An Article
+                    An article
                   </a></h1>
                   <h2>a jumbo one</h2>
                 </div>
@@ -591,7 +625,7 @@ such as `image grid <{filename}/css/components.rst#image-grid>`_ possible.
 
 Similarly to `landing pages <#landing-pages>`_, the cover image of the jumbo
 article always spans the whole screen width and goes below the top navbar. If
-you want the navbar to be semi-transparent, put :css:`.m-navbar-jumbo` on the
+you want the navbar to be semi-transparent, put :css:`.m-navbar-cover` on the
 :html:`<nav>` element. Compared to `landing pages <#landing-pages>`_ the navbar
 retains semi-transparent background at all times.
 
@@ -664,3 +698,44 @@ and save vertical space. For a tag cloud, mark the :html:`<ul>` with
             </ul>
           </div>
         </nav>
+
+`News list on index page`_
+--------------------------
+
+Sometimes you may want just a small list of news items tucked to the bottom of
+an index page that's otherwise full of other content. Mark a block with
+:css:`.m-landing-news` and put a list of articles in it. The :html:`<h3>` can
+be used to link to the blog front page; if you use the :html:`<time>` tag for
+specifying article dates, it will be aligned to the right. Example:
+
+.. code-figure::
+
+    .. code:: html
+
+        <div class="m-row">
+          <div class="m-col-m-8 m-push-m-2">
+            <div class="m-landing-news m-note m-default">
+              <h3><a href="#">Latest news on our blog &raquo;</a></h3>
+              <ul class="m-unstyled">
+                <li><time class="m-text m-dim" datetime="2018-01-16T00:00:00+00:00">Jan 16, 2018</time><a href="article2.html">The latest article</a></li>
+                <li><time class="m-text m-dim" datetime="2017-12-09T00:00:00+00:00">Dec 09, 2017</time><a href="article.html">A slightly older article</a></li>
+              </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    .. raw:: html
+
+        <div class="m-row">
+          <div class="m-col-m-8 m-push-m-2">
+            <div class="m-landing-news m-note m-default">
+              <h3><a href="#">Latest news on our blog &raquo;</a></h3>
+              <ul class="m-unstyled">
+                <li><time class="m-text m-dim" datetime="2018-01-16T00:00:00+00:00">Jan 16, 2018</time><a href="article2.html">The latest article</a></li>
+                <li><time class="m-text m-dim" datetime="2017-12-09T00:00:00+00:00">Dec 09, 2017</time><a href="article.html">A slightly older article</a></li>
+              </ul>
+              </div>
+            </div>
+          </div>
+        </div>

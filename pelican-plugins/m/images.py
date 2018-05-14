@@ -1,7 +1,7 @@
 #
 #   This file is part of m.css.
 #
-#   Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+#   Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 #
 #   Permission is hereby granted, free of charge, to any person obtaining a
 #   copy of this software and associated documentation files (the "Software"),
@@ -185,14 +185,26 @@ class ImageGrid(rst.Directive):
             im = PIL.Image.open(absuri)
 
             # Get EXIF info, if it's there
-            if hasattr(im, '_getexif'):
+            if hasattr(im, '_getexif') and im._getexif() is not None:
                 exif = {
                     PIL.ExifTags.TAGS[k]: v
                     for k, v in im._getexif().items()
                     if k in PIL.ExifTags.TAGS and len(str(v)) < 256
                 }
-                # Can't use just *exif['ExposureTime'] on Py3.4
-                caption = "F{}, {}/{} s, ISO {}".format(float(exif['FNumber'][0])/float(exif['FNumber'][1]), exif['ExposureTime'][0], exif['ExposureTime'][1], exif['ISOSpeedRatings'])
+
+                # Not all info might be present
+                caption = []
+                if 'FNumber' in exif:
+                    caption += ["F{}".format(float(float(exif['FNumber'][0])/float(exif['FNumber'][1])))]
+                if 'ExposureTime' in exif:
+                    numerator, denominator = exif['ExposureTime']
+                    if int(numerator) > int(denominator):
+                        caption += ["{} s".format(float(numerator)/float(denominator))]
+                    else:
+                        caption += ["{}/{} s".format(numerator, denominator)]
+                if 'ISOSpeedRatings' in exif:
+                    caption += ["ISO {}".format(exif['ISOSpeedRatings'])]
+                caption = ', '.join(caption)
 
             # It's not (e.g. a PNG file), empty caption
             else: caption = ""

@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -43,13 +43,15 @@ and restart Pelican. Download the plugins below or
 -   :gh:`m.htmlsanity <mosra/m.css$master/pelican-plugins/m/htmlsanity.py>`
 -   :gh:`m.components <mosra/m.css$master/pelican-plugins/m/components.py>`
 -   :gh:`m.images <mosra/m.css$master/pelican-plugins/m/images.py>`
--   :gh:`m.math  <mosra/m.css$master/pelican-plugins/m/math.py>` (needs also :gh:`latex2svg <mosra/m.css$master/pelican-plugins/m/latex2svg.py>`),
-    :gh:`m.code <mosra/m.css$master/pelican-plugins/m/code.py>`
+-   :gh:`m.math  <mosra/m.css$master/pelican-plugins/m/math.py>` (needs also :gh:`latex2svg <mosra/m.css$master/pelican-plugins/latex2svg.py>`),
+    :gh:`m.code <mosra/m.css$master/pelican-plugins/m/code.py>` (needs also :gh:`ansilexer <mosra/m.css$master/pelican-plugins/ansilexer.py>`)
 -   :gh:`m.gh <mosra/m.css$master/pelican-plugins/m/gh.py>`,
     :gh:`m.dox <mosra/m.css$master/pelican-plugins/m/dox.py>`,
     :gh:`m.gl <mosra/m.css$master/pelican-plugins/m/gl.py>`,
     :gh:`m.abbr <mosra/m.css$master/pelican-plugins/m/abbr.py>`,
-    :gh:`m.filesize <mosra/m.css$master/pelican-plugins/m/filesize.py>`
+    :gh:`m.filesize <mosra/m.css$master/pelican-plugins/m/filesize.py>`,
+    :gh:`m.alias <mosra/m.css$master/pelican-plugins/m/alias.py>`
+-   :gh:`m.metadata <mosra/m.css$master/pelican-plugins/m/metadata.py>`
 
 Click on the headings below to get to know more. Note that particular plugins
 can have additional dependencies besides just Pelican, see documentation of
@@ -84,9 +86,18 @@ rendering and syntax highlighting, so they are provided as separate packages
 that you can but don't have to use. With these, math and code snippets can be
 entered directly in your :abbr:`reST <reStructuredText>` sources.
 
-`Links » <{filename}/plugins/links.rst>`_
-=========================================
+`Links and other » <{filename}/plugins/links.rst>`_
+===================================================
 
-The :py:`m.gh`, :py:`m.dox`, :py:`m.gl`, :py:`m.abbr` and :py:`m.fiilesize`
-plugins make it easy for you to link to GitHub projects, issues or PRs, to
-Doxygen documentation and do more useful things.
+The :py:`m.gh`, :py:`m.dox`, :py:`m.gl`, :py:`m.abbr`, :py:`m.fiilesize` and
+:py:`m.alias` plugins make it easy for you to link to GitHub projects, issues
+or PRs, to Doxygen documentation, query file sizes and provide URL aliases to
+preserve link compatibility.
+
+`Metadata » <{filename}/plugins/metadata.rst>`_
+===============================================
+
+With the :py:`m.metadata` plugin it's possible to assign additional description
+and images to authors, categories and tags. The information can then appear on
+article listing page, as a badge under the article or be added to social meta
+tags.

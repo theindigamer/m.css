@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -30,7 +30,7 @@ Math and code
     .. note-dim::
         :class: m-text-center
 
-        `« Images <{filename}/plugins/images.rst>`_ | `Pelican plugins <{filename}/plugins.rst>`_ | `Links » <{filename}/plugins/links.rst>`_
+        `« Images <{filename}/plugins/images.rst>`_ | `Pelican plugins <{filename}/plugins.rst>`_ | `Links and other » <{filename}/plugins/links.rst>`_
 
 .. role:: css(code)
     :language: css
@@ -50,10 +50,15 @@ rendering directly from your :abbr:`reST <reStructuredText>` sources.
 `Math`_
 =======
 
-Download the `m/math.py and m/latex2svg.py <{filename}/plugins.rst>`_ files,
-put them including the ``m/`` directory into one of your :py:`PLUGIN_PATHS` and
-add :py:`m.math` package to your :py:`PLUGINS` in ``pelicanconf.py``. This
-plugin assumes presence of `m.htmlsanity <{filename}/plugins/htmlsanity.rst>`_.
+Download the `m/math.py and latex2svg.py <{filename}/plugins.rst>`_ files, put
+them including the ``m/`` directory into one of your :py:`PLUGIN_PATHS` and add
+:py:`m.math` package to your :py:`PLUGINS` in ``pelicanconf.py``. This plugin
+assumes presence of `m.htmlsanity <{filename}/plugins/htmlsanity.rst>`_.
+
+.. note-danger::
+
+    Note that this plugin, unlike most of the others, requires at least Python
+    3.5 to run properly.
 
 .. code:: python
 
@@ -65,6 +70,16 @@ package manager, for example on Ubuntu:
 .. code:: sh
 
     sudo apt-get install texlive-base texlive-latex-extra texlive-fonts-extra
+
+.. block-warning:: Note for macOS users
+
+    On macOS 10.11 and up, if you use MacTex, there's some additional setup
+    needed `as detailed here <https://tex.stackexchange.com/a/249967>`_ --- you
+    need to update your :sh:`$PATH` so the binaries are properly found:
+
+    .. code:: sh
+
+        export PATH=$PATH:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin
 
 .. note-success::
 
@@ -131,13 +146,30 @@ want to add additional CSS classes, derive a custom role from it.
     Quaternion-conjugated dual quaternion is :math-info:`\hat q^* = q_0^* + q_\epsilon^*`,
     while dual-conjugation gives :math:`\overline{\hat q} = q_0 - \epsilon q_\epsilon`.
 
+.. note-info::
+
+    LaTeX can be sometimes a real pain to set up. In order to make it possible
+    to work on sites that use the :py:`m.math` plugin on machines without LaTeX
+    installed, you can enable a fallback option to render all math as code
+    blocks using the :py:`M_MATH_RENDER_AS_CODE` setting. That can be, for
+    example, combined with a check for presence of the LaTeX binary:
+
+    .. code:: py
+
+        import shutil
+        import logging
+
+        if not shutil.which('latex'):
+            logging.warning("LaTeX not found, fallback to rendering math as code")
+            M_MATH_RENDER_AS_CODE = True
+
 `Code`_
 =======
 
-Download the `m/code.py <{filename}/plugins.rst>`_ file, put it including the
-``m/`` directory into one of your :py:`PLUGIN_PATHS` and add :py:`m.code`
-package to your :py:`PLUGINS` in ``pelicanconf.py``. This plugin assumes
-presence of `m.htmlsanity <{filename}/plugins/htmlsanity.rst>`_.
+Download the `m/code.py and ansilexer.py <{filename}/plugins.rst>`_ files, put
+them including the ``m/`` directory into one of your :py:`PLUGIN_PATHS` and add
+:py:`m.code` package to your :py:`PLUGINS` in ``pelicanconf.py``. This plugin
+assumes presence of `m.htmlsanity <{filename}/plugins/htmlsanity.rst>`_.
 
 .. code:: python
 

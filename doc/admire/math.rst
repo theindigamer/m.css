@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -168,7 +168,7 @@ around:
 
     .. class:: m-text m-text-right m-dim m-em
 
-    --  `Discrete Fourier transform § Periodicity <https://en.wikipedia.org/wiki/Discrete_Fourier_transform#Periodicity>`_, Wikipedia
+    --- `Discrete Fourier transform § Periodicity <https://en.wikipedia.org/wiki/Discrete_Fourier_transform#Periodicity>`_, Wikipedia
 
 And now, finally, some inline math. Note the vertical alignment, consistent
 line spacing and that nothing gets relayouted during page load:

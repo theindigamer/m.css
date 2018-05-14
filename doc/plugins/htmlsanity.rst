@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -112,8 +112,9 @@ French-style quotes.
 
 This plugin contains a patched version of
 `smart_quotes option <http://docutils.sourceforge.net/docs/user/smartquotes.html>`_
-from Docutils, which is based off SmartyPants, but with proper language awareness
-on top. See for yourself:
+from Docutils, which is based off SmartyPants, but with proper language
+awareness on top. It is applied to whole document contents and fields that are
+included in the :py:`FORMATTED_FIELDS`. See for yourself:
 
 .. code-figure::
 
@@ -348,7 +349,7 @@ from passed text. The ``enable`` argument works the same as with the
 
     <html>
       <head>
-        <meta name="description" content="{{ article.summary|dehyphenate|striptags }}" />
+        <meta name="description" content="{{ article.summary|dehyphenate|striptags|e }}" />
       </head>
       ...
 

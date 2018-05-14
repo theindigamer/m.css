@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -34,6 +34,7 @@ Theme
 
 .. role:: rst(code)
     :language: rst
+.. |x| unicode:: U+2715 .. nicer multiply sign
 
 The second largest offering of m.css is a full-featured theme for the
 `Pelican static site generator <https://getpelican.com/>`_. The theme is
@@ -46,8 +47,11 @@ or a full product/project/portfolio website where the blog is only a side dish.
 `Quick start`_
 ==============
 
-The easiest way to start is putting the :gh:`whole Git repository <mosra/m.css>`
-of m.css into your project, for example as a submodule:
+Following the `Pelican quick start guide <{filename}/pelican.rst#quick-start>`_,
+it's assumed you already have at least Python 3.4 and the Python 3 version of
+Pelican installed. The easiest way to start is putting the
+:gh:`whole Git repository <mosra/m.css>` of m.css into your project, for
+example as a submodule:
 
 .. code:: sh
 
@@ -75,8 +79,8 @@ plugin, so that plugin needs to be loaded as well.
                    '/static/m-dark.css']
     M_THEME_COLOR = '#22272e'
 
-    PLUGIN_PATHS += ['m.css/pelican-plugins']
-    PLUGINS += ['m.htmlsanity']
+    PLUGIN_PATHS = ['m.css/pelican-plugins']
+    PLUGINS = ['m.htmlsanity']
 
 Here you can take advantage of the ``pelicanconf.py`` and ``publishconf.py``
 distinction --- use ``m-dark.css`` for local development and override the
@@ -98,12 +102,8 @@ If you would want to use the light theme instead, the configuration is this
     and plugins are prefixed with ``M_``. Configuration variables without
     prefix are builtin Pelican options.
 
-.. note-warning::
-
-    The above configuration should be enough to produce a (mostly empty)
-    version of your website using the theme without any errors during
-    processing. If that's not the case, please :gh:`report a bug <mosra/m.css/issues/new>`.
-    Thank you!
+If you see something unexpected or not see something expected, check the
+`Troubleshooting`_ section below.
 
 `Configuration`_
 ================
@@ -115,7 +115,9 @@ of the website with pages is treated differently from the "blog" part with
 articles and there are two additional configuration options :py:`M_BLOG_URL` and
 :py:`M_BLOG_NAME` that control how various parts of the theme link to the blog
 and how blog pages are named in the :html:`<title>` element. The :py:`M_BLOG_URL`
-can be either absolute or relative to :py:`SITEURL`.
+can be either absolute or relative to :py:`SITEURL`. If :py:`M_BLOG_NAME` /
+:py:`M_BLOG_URL` are not set, the theme assumes they are the same as
+:py:`SITENAME` / :py:`SITEURL`.
 
 .. code:: py
 
@@ -125,19 +127,34 @@ can be either absolute or relative to :py:`SITEURL`.
     M_BLOG_NAME = 'Your Brand Blog'
     M_BLOG_URL = 'blog/'
 
+The :py:`M_FAVICON` setting, if present, is used to specify contents of the
+:html:`<link rel="icon">` tag. It's a tuple of :py:`(url, type)` where
+:py:`url` is favicon URL and :py:`type` is its corresponding MIME type. If
+:py:`M_BLOG_FAVICON` is specified, it's overriding :py:`M_FAVICON` on blog-like
+pages (articles, article listing... basically everything except pages). If
+:py:`M_BLOG_FAVICON` is not specified, :py:`M_FAVICON` is used everywhere; if
+neither is specified no :html:`<link>` tag is rendered. Example configuration:
+
+.. code:: py
+
+    M_FAVICON = ('favicon.ico', 'image/x-ico')
+    M_BLOG_FAVICON = ('favicon-blog.png', 'image/png')
+
 `Top navbar`_
 -------------
 
 :py:`M_SITE_LOGO` is an image file that will be used as a brand logo on left
 side of the navbar, :py:`M_SITE_LOGO_TEXT` is brand logo text. Specifying just
-one of these does the expected thing. The brand logo/text is a link that leads
-to :py:`SITTEURL`.
+one of these does the expected thing, if neither of them is specified, the
+theme will use :py:`SITENAME` in place of :py:`M_SITE_LOGO_TEXT`. The brand
+logo/text is a link that leads to :py:`SITTEURL`.
 
 :py:`M_LINKS_NAVBAR1` and :py:`M_LINKS_NAVBAR2` variables contain links to put
 in the top navbar. On narrow screens, the navbar is divided into two columns,
 links from the first variable are in the left column while links from the
 second variable are in the right column. Omit the second variable if you want
-the links to be in a single column.
+the links to be in a single column. Omitting both variables will cause the
+hamburger menu link on small screen sizes to not even be present.
 
 Both variables have the same format --- a list of 4-tuples, where first item is
 link title, second the URL, third page slug of the corresponding page (used
@@ -174,8 +191,10 @@ Similarly to the top navbar, :py:`M_LINKS_FOOTER1`, :py:`M_LINKS_FOOTER2`,
 in the footer navigation. The links are arranged in four columns, which get
 reduced to just two columns on small screens. Omitting :py:`M_LINKS_FOOTER4`
 will fill the last column with a *Blog* entry, linking to the Archives page and
-listing all blog categories; omitting any of the remaining variables will make
-given column empty.
+listing all blog categories; you can disable that entry by setting
+:py:`M_LINKS_FOOTER4 = []`. Omitting any of the remaining variables will make
+given column empty, omitting all variables will not render the navigation at
+all.
 
 The variables are lists of 2-tuples, containing link title and URL. First item
 is used for column header, if link URL of the first item is empty, given column
@@ -185,7 +204,18 @@ the same way as in the `top navbar`_. A tuple entry with empty title (i.e.,
 
 Footer fine print can be specified via :py:`M_FINE_PRINT`. Contents of the
 variable are processed as :abbr:`reST <reStructuredText>`, so you can use all
-the formatting and linking capabilities in there.
+the formatting and linking capabilities in there. If :py:`M_FINE_PRINT` is not
+specified, the theme will use the following instead. Set
+:py:`M_FINE_PRINT = None` to disable rendering of the fine print completely.
+
+.. code:: py
+
+    M_FINE_PRINT = SITENAME + """. Powered by `Pelican <https://getpelican.com>`_
+        and `m.css <http://mcss.mosra.cz>`_."""
+
+If :py:`M_FINE_PRINT` is set to :py:`None` and none of :py:`M_LINKS_FOOTER1`,
+:py:`M_LINKS_FOOTER2`, :py:`M_LINKS_FOOTER3`, :py:`M_LINKS_FOOTER4` is set, the
+footer is not rendered at all.
 
 Example configuration, again matching example markup from the
 `CSS page layout <{filename}/css/page-layout.rst#footer-navigation>`__
@@ -209,6 +239,90 @@ documentation, populating the last column implicitly:
     Your Brand. Copyright © `You <mailto:you@your.brand>`_, 2017. All rights
     reserved.
     """
+
+`(Social) meta tags`_
+---------------------
+
+The :rst:`M_BLOG_DESCRIPTION` setting, if available, is used to populate
+:html:`<meta name="description">` on the index / archive page, which can be
+then shown in search engine results. For sharing pages on Twitter, Facebook and
+elsewhere, it's possible to configure site-wide `Open Graph <http://ogp.me/>`_
+and `Twitter Card <https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/summary-card-with-large-image>`_
+:html:`<meta>` tags:
+
+-   ``og:site_name`` is set to :py:`M_SOCIAL_SITE_NAME`, if available
+-   ``twitter:site`` / ``twitter:site:id`` is set to :py:`M_SOCIAL_TWITTER_SITE`
+    / :py:`M_SOCIAL_TWITTER_SITE_ID``, if available
+-   Global ``og:title`` / ``twitter:title`` is set to :py:`M_BLOG_NAME` on
+    index and archive pages and to category/author/tag name on particular
+    filtering pages. This is overriden by particular pages and articles.
+-   Global ``og:url`` is set to :py:`M_BLOG_URL` on index and archive pages and
+    to category/author/tag URL on particular filtering pages. Pagination is
+    *not* included in the URL. This is overriden by particular pages and
+    articles.
+-   Global ``og:image`` / ``twitter:image`` is set to the
+    :py:`M_SOCIAL_IMAGE` setting, if available. The image is expected to be
+    smaller and square; Pelican internal linking capabilities are *not*
+    supported in this setting. This can be overriden by particular pages and
+    articles.
+-   Global ``twitter:card`` is set to ``summary``. This is further affected by
+    metadata of particular pages and articles.
+-   Global ``og:description`` / ``twitter:description`` is set to
+    :py:`M_SOCIAL_BLOG_SUMMARY` on index and archive pages.
+-   Global ``og:type`` is set to ``website``. This is overriden by particular
+    pages and articles.
+
+See `(Social) meta tags for pages`_ and `(Social) meta tags for articles`_
+sections below for page- and article-specific :html:`<meta>` tags.
+
+.. note-danger::
+
+    The :html:`<meta name="keywords">` tag is not supported, as it doesn't
+    have any effect on search engine results at all.
+
+Example configuration to give sane defaults to all social meta tags:
+
+.. code:: py
+
+    M_BLOG_NAME = "Your Brand Blog"
+    M_BLOG_URL = 'http://blog.your.brand/'
+    M_BLOG_DESCRIPTION = "Your Brand is the brand that provides all that\'s needed."
+
+    M_SOCIAL_TWITTER_SITE = '@your.brand'
+    M_SOCIAL_TWITTER_SITE_ID = 1234567890
+    M_SOCIAL_IMAGE = 'http://your.brand/static/site.png'
+    M_SOCIAL_BLOG_SUMMARY = "This is the brand you need"
+
+.. _global-site-image:
+
+.. block-success:: Recommended sizes for global site image
+
+    The theme assumes that the global site image is smaller and square in order
+    to appear just as a small thumbnail next to a link, not as large cover
+    image above it --- the reasoning beind is that there's no point in annoying
+    the users by decorating the global site links with the exact same large
+    image.
+
+    For Twitter, this is controlled explicitly by setting ``twitter:card``
+    to ``summary`` instead of ``summary_large_image``, but in case of Facebook,
+    it's needed to rely on their autodetection.
+    `Their documentation <https://developers.facebook.com/docs/sharing/best-practices/#images>`_
+    says that images smaller than 600\ |x|\ 315 px are displayed as small
+    thumbnails. Square image of size 256\ |x|\ 256 px is known to work well.
+
+    Note that the assumptions are different for pages and articles with
+    explicit cover images, see `(Social) meta tags for pages`_ below for
+    details.
+
+.. note-info::
+
+    You can see how links for default pages will display by pasting
+    URL of the `article listing page <{category}examples>`_ into either
+    `Facebook Debugger <https://developers.facebook.com/tools/debug/>`_ or
+    `Twitter Card Validator <https://cards-dev.twitter.com/validator>`_.
+
+It's possible to disable rendering of all social meta tags (for example for
+testing purposes) by setting :py:`M_DISABLE_SOCIAL_META_TAGS` to :py:`True`.
 
 `Pages`_
 ========
@@ -275,8 +389,9 @@ cover image spanning the whole window width. Put cover image URL into a
 :abbr:`reST <reStructuredText>`-processed content that appears on top of the
 cover image. Contents of the :rst:`:landing:` are put into a
 :html:`<div class="m-container">`, you are expected to fully take care of rows
-and columns in it. It's also possible to hide the navbar brand link --- simply
-add a :rst:`:navbar_brand_hidden:` field with non-empty contents.
+and columns in it. The :rst:`:hide_navbar_brand:` field controls visibility of
+the navbar brand link. Set it to :py:`True` to hide it, default (if not
+present) is :py:`False`.
 
 .. block-warning:: Configuration
 
@@ -300,7 +415,7 @@ destination and URL.
     :save_as: index.html
     :url:
     :cover: {filename}/static/cover.jpg
-    :navbar_brand_hidden: true
+    :hide_navbar_brand: True
     :landing:
         .. container:: m-row
 
@@ -325,6 +440,20 @@ destination and URL.
 .. note-info::
 
     You can see the landing page in action on the `main project page <{filename}/index.rst>`_.
+
+`Pages with cover image`_
+-------------------------
+
+Besides full-blown landing pages that give you control over the whole layout,
+you can add cover images to regular pages by just specifying the :rst:`:cover:`
+field but omitting the :rst:`:landing:` field. See corresponding section
+`in the CSS page layout docs <{filename}/css/page-layout.rst#pages-with-cover-image>`_
+for details about how the cover image affects page layout.
+
+.. note-info::
+
+    Real-world example of a page with cover image can be seen on the
+    `Magnum Engine website <http://magnum.graphics/features/extensions/>`_.
 
 `Page header and footer`_
 -------------------------
@@ -363,31 +492,67 @@ above:
 
         FORMATTED_FIELDS += ['header', 'footer']
 
+.. note-warning::
+
+    The :rst:`:header:` field is not supported on `landing pages`_. In case
+    both :rst:`:landing:` and :rst:`:header:` is present, :rst:`:header:` is
+    ignored. However, it works as expected if just :rst:`:cover:` is present.
+
+`News on index page`_
+---------------------
+
+If you override the index page to a custom landing page, by default you lose
+the list of latest articles. That might cause the website to appear stale when
+you update just the blog. In order to fix that, it's possible to show a block
+with latest articles on the index page using the :py:`M_NEWS_ON_INDEX` setting.
+It's a tuple of :py:`(title, count)` where :py:`title` is the block header
+title that acts as a link to :py:`M_BLOG_URL` and :py:`count` is the max number
+of articles shown. Example configuration:
+
+.. code:: py
+
+    M_NEWS_ON_INDEX = ("Latest news on our blog", 3)
+
+.. note-success::
+
+    You can see how this block looks on the Magnum Engine main page:
+    http://magnum.graphics
+
 `(Social) meta tags for pages`_
 -------------------------------
 
-You can use :rst:`:description:` field to populate :html:`<meta name="description">`,
-which can be then shown in search engine results. Other than that, the field
-does not appear anywhere on the rendered page. For sharing pages on Twitter,
-Facebook and elsewhere, both `Open Graph <http://ogp.me/>`_ and
-`Twitter Card <https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/summary-card-with-large-image>`_
-:html:`<meta>` tags are supported:
+Every page has :html:`<link rel="canonical">` pointing to its URL to avoid
+duplicates in search engines when using GET parameters. In addition to the
+global meta tags described in `(Social) meta tags`_ above, you can use the
+:rst:`:description:` field to populate :html:`<meta name="description">`. Other
+than that, the field does not appear anywhere on the rendered page. If such
+field is not set, the description :html:`<meta>` tag is not rendered at all.
+It's recommended to add it to :py:`FORMATTED_FIELDS` so you can make use of the
+`advanced typography features <{filename}/plugins/htmlsanity.rst#typography>`_
+like smart quotes etc. in it:
+
+.. code:: py
+
+    FORMATTED_FIELDS += ['description']
+
+The global `Open Graph`_ and `Twitter Card`_ :html:`<meta>` tags are
+specialized for pages like this:
 
 -   Page title is mapped to ``og:title`` / ``twitter:title``
--   Page URL is mapped to ``og:url`` / ``twitter:url``
+-   Page URL is mapped to ``og:url``
 -   The :rst:`:summary:` field is mapped to ``og:description`` /
     ``twitter:description``. Note that if the page doesn't have explicit
     summary, Pelican takes it from the first few sentences of the content and
     that may not be what you want. This is also different from the
     :rst:`:description:` field mentioned above and, unlike with articles,
     :rst:`:summary:` doesn't appear anywhere on the rendered page.
--   The :rst:`:cover:` field (e.g. the one used on `landing pages <#landing-pages>`_),
-    if present, is mapped to ``og:image`` / ``twitter:image``. The exact same
-    file is used without any resizing or cropping and is assumed to be in
-    landscape.
+-   The :rst:`:cover:` field (e.g. the one used on `landing pages`_), if
+    present, is mapped to ``og:image`` / ``twitter:image``, overriding the
+    global :py:`M_SOCIAL_IMAGE` setting. The exact same file is used without
+    any resizing or cropping and is assumed to be in landscape.
 -   ``twitter:card`` is set to ``summary_large_image`` if :rst:`:cover:` is
     present and to ``summary`` otherwise
--   ``og:type`` is set to ``website``
+-   ``og:type`` is set to ``page``
 
 Example overriding the index page with essential properties for nice-looking
 social links:
@@ -402,12 +567,26 @@ social links:
     :cover: {filename}/static/cover.jpg
     :summary: This is the brand you need.
 
-.. note-success::
+.. block-success:: Recommended sizes for cover images
 
-    You can see how page links will display by pasting
-    URL of the `index page <{filename}/index.rst>`_ into either
-    `Facebook Debugger <https://developers.facebook.com/tools/debug/>`_ or
-    `Twitter Card Validator <https://cards-dev.twitter.com/validator>`_.
+    Unlike the global site image described in `(Social) meta tags <#global-site-image>`_,
+    page-specific cover images are assumed to be larger and in landscape to
+    display large on top of the link, as they should act to promote the
+    particular content instead of being just a decoration.
+
+    `Facebook recommendations for the cover image <https://developers.facebook.com/docs/sharing/best-practices/#images>`_
+    say that the image should have 1.91:1 aspect ratio and be ideally at least
+    1200\ |x|\ 630 px large, while `Twitter recommends <https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/summary-card-with-large-image>`_ 2:1 aspect ratio and at
+    most 4096\ |x|\ 4096 px. In case of Twitter, the large image display is
+    controlled explicitly by having ``twitter:card`` set to ``summary_large_image``,
+    but for Facebook one needs to rely on their autodetection. Make sure the
+    image is at least 600\ |x|\ 315 px to avoid fallback to a small thumbnail.
+
+.. note-info::
+
+    You can see how page links will display by pasting URL of the
+    `index page <{filename}/index.rst>`_ into either `Facebook Debugger`_ or
+    `Twitter Card Validator`_.
 
 `Articles`_
 ===========
@@ -427,12 +606,18 @@ actual content instead of just a boring list of article summaries.
 
 Article pages show a list of sections and tags in a right sidebar. By default,
 list of authors is not displayed as there is usually just one author. If you
-want to display the authors as well, enable it using the :py:`SHOW_AUTHOR_LIST`
+want to display the authors as well, enable it using the :py:`M_SHOW_AUTHOR_LIST`
 option in the configuration:
 
 .. code:: py
 
     M_SHOW_AUTHOR_LIST = True
+
+.. note-success::
+
+    The theme is able to recognize additional description and images for
+    authors, categories and tags from the
+    `Metadata plugin <{filename}/plugins/metadata.rst>`_, if you enable it.
 
 `Jumbo articles`_
 -----------------
@@ -444,15 +629,18 @@ title and subtitle that's then rendered in a different font size. Example:
 
 .. code:: rst
 
-    An Article --- a jumbo one
+    An article --- a jumbo one
     ##########################
 
     :cover: {filename}/static/ship.jpg
-    :slug: jumbo-article
     :summary: Article summary paragraph.
 
+    Article contents.
+
 Sidebar with tag, category and author list shown in the classic article layout
-on the right is moved to the bottom for jumbo articles.
+on the right is moved to the bottom for jumbo articles. In case you need to
+invert text color on cover, add a :rst:`:class:` field containing the
+``m-inverted`` CSS class.
 
 .. note-info::
 
@@ -460,47 +648,141 @@ on the right is moved to the bottom for jumbo articles.
     `a normal article <{filename}/examples/article.rst>`_ and a
     `jumbo article <{filename}/examples/jumbo-article.rst>`_.
 
+`Archived articles`_
+--------------------
+
+It's possible to mark articles and archived by setting the :rst:`:archived:`
+field to :py:`True`. In addition to that, you can display an arbitrary
+formatted block on the article page on top of article contents right below the
+summary. The content of the block is controlled by the
+:py:`M_ARCHIVED_ARTICLE_BADGE` setting, containinig
+:abbr:`reST <reStructuredText>`-formatted markup. The ``{year}`` placeholder,
+if present, is replaced with the article year. If the setting is not present,
+no block is rendered at all. Example setting:
+
+.. code:: py
+
+    M_ARCHIVED_ARTICLE_BADGE = """
+    .. container:: m-note m-warning
+
+        This article is from {year}. **It's old.** Deal with it.
+    """
+
 `(Social) meta tags for articles`_
 ----------------------------------
 
-Like with pages, you can use :rst:`:description:` field to populate
-:html:`<meta name="description">`, which can be then shown in search engine
-results. Other than that, the field doesn't appear anywhere in the rendered
-article. `Open Graph`_ and `Twitter Card`_ :html:`<meta>` tags are also
-supported in a similar way:
+Every article has :html:`<link rel="canonical">` pointing to its URL to avoid
+duplicates in search engines when using GET parameters. In addition to the
+global meta tags described in `(Social) meta tags`_ above, you can use the
+:rst:`:description:` field to populate :html:`<meta name="description">`. Other
+than that, the field doesn't appear anywhere in the rendered article.  If such
+field is not set, the description :html:`<meta>` tag is not rendered at all.
+Again, it's recommended to add it to :py:`FORMATTED_FIELDS`.
+
+The global `Open Graph`_ and `Twitter Card`_ :html:`<meta>` tags are
+specialized for articles like this:
 
 -   Article title is mapped to ``og:title`` / ``twitter:title``
--   Pernament article URL is mapped to ``og:url`` / ``twitter:url``
+-   Article URL is mapped to ``og:url``
 -   The :rst:`:summary:` field is mapped to ``og:description`` /
     ``twitter:description``. Note that if the article doesn't have explicit
     summary, Pelican takes it from the first few sentences of the content and
     that may not be what you want. This is also different from the
     :rst:`:description:` field mentioned above.
--   The :rst:`:cover:` field from `jumbo articles <#jumbo-articles>`_, if
-    present, is mapped to ``og:image`` / ``twitter:image``. The exact same
-    file is used without any resizing or cropping and is assumed to be in
-    landscape.
+-   The :rst:`:cover:` field from `jumbo articles`_, if present, is mapped to
+    ``og:image`` / ``twitter:image``, overriding the global :py:`M_SOCIAL_IMAGE`
+    setting. The exact same file is used without any resizing or cropping and
+    is assumed to be in landscape. See `(Social) meta tags for pages`_ above
+    for image size recommendations.
 -   ``twitter:card`` is set to ``summary_large_image`` if :rst:`:cover:` is
     present and to ``summary`` otherwise
 -   ``og:type`` is set to ``article``
 
 .. note-success::
 
+    Additional social meta tags (such as author or category info) are be
+    exposed by the `Metadata plugin <{filename}/plugins/metadata.rst>`_.
+
+.. note-info::
+
     You can see how article links will display by pasting
     URL of e.g. the `jumbo article`_ into either `Facebook Debugger`_ or
     `Twitter Card Validator`_.
+
+`Controlling article appearance`_
+---------------------------------
+
+By default, the theme assumes that you provide an explicit :rst:`:summary:`
+field for each article. The summary is then displayed on article listing page
+and also prepended to fully expanded article. If your :rst:`:summary:` is
+automatically generated by Pelican or for any other reason repeats article
+content, it might not be desirable to show it in combination with article
+content. This can be configured via the following setting:
+
+.. code:: py
+
+    M_HIDE_ARTICLE_SUMMARY = True
+
+There's also a possibility to control this on a per-article basis by setting
+:rst:`:hide_summary:` to either :py:`True` or :py:`False`. If both global and
+per-article setting is present, article-specific setting has a precedence.
+Example:
+
+.. code:: rst
+
+    An article without explicit summary
+    ###################################
+
+    :cover: {filename}/static/ship.jpg
+    :hide_summary: True
+
+    Implicit article summary paragraph.
+
+    Article contents.
+
+.. note-info::
+
+    Here's the visual appearance of an `article without explicit summary <{filename}/examples/article-hide-summary.rst>`_
+    and a corresponding `jumbo article <{filename}/examples/jumbo-article-hide-summary.rst>`__.
+
+As noted above, the first article is by default fully expanded on index and
+archive page. However, sometimes the article is maybe too long to be expanded
+or you might want to not expand any article at all. This can be controlled
+either globally using the following setting:
+
+.. code:: py
+
+    M_COLLAPSE_FIRST_ARTICLE = True
+
+Or, again, on a per-article basis, by setting :rst:`:collapse_first:` to either
+:py:`True` or :py:`False`. If both global and per-article setting is present,
+article-specific setting has a precedence.
 
 `Pre-defined pages`_
 ====================
 
 With the default configuration above the index page is just a list of articles
-with the first being expanded, the same is for the archives page. If you want
-to have a custom index page (for example a `landing page <#landing-pages>`_),
-remove :py:`'index'` from the :py:`DIRECT_TEMPLATES` setting:
+with the first being expanded; the archives page is basically the same. If you
+want to have a custom index page (for example a `landing page <#landing-pages>`_),
+remove :py:`'index'` from the :py:`DIRECT_TEMPLATES` setting and keep just
+:py:`'archives'` for the blog front page. Also you may want to enable
+pagination for the archives, as that's not enabled by default:
 
 .. code:: py
 
-    DIRECT_TEMPLATES = []
+    # Defaults to ['index', 'categories', 'authors', 'archives']
+    DIRECT_TEMPLATES = ['archives']
+
+    # Defaults to ['index']
+    PAGINATED_DIRECT_TEMPLATES = ['archives']
+
+.. note-warning::
+
+    The m.css Pelican theme doesn't provide per-year, per-month or per-day
+    archive pages or category, tag, author *list* pages at the moment ---
+    that's why the above :py:`DIRECT_TEMPLATES` setting omits them. List of
+    categories and tags is available in a sidebar from any article or article
+    listing page.
 
 Every category, tag and author has its own page that lists corresponding
 articles in a way similar to the index or archives page, but without the first
@@ -516,13 +798,6 @@ Index, archive and all category/tag/author pages are paginated based on the
 to prev and next page, besides that there's :html:`<link rel="prev">` and
 :html:`<link rel="next">` that provides the same as a hint to search engines.
 
-.. note-warning::
-
-    The m.css Pelican theme doesn't provide per-year, per-month or per-day
-    archive pages or category, tag, author *list* pages at the moment. List of
-    categories and tags is available in a sidebar from any article or article
-    listing page.
-
 `Theme properties`_
 ===================
 
@@ -533,3 +808,14 @@ is valid HTML5 and should be parsable as XML.
 
     This is one of the main goals of this project. Please
     :gh:`report a bug <mosra/m.css/issues/new>` if it's not like that.
+
+`Troubleshooting`_
+==================
+
+`Output is missing styling`_
+----------------------------
+
+If you are on Windows and don't have Git symlinks enabled, empty CSS files
+might get copied. The solution is either to reinstall Git with symlinks enabled
+or manually copy all ``*.css`` files from ``css/`` to
+``pelican-theme/static/``, replacing the broken symlinks present there.

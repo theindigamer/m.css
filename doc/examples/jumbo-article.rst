@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -22,18 +22,17 @@
     DEALINGS IN THE SOFTWARE.
 ..
 
-An Article --- a jumbo one
+An article --- a jumbo one
 ##########################
 
 .. role:: language-la
     :class: language-la
 
 :cover: {filename}/static/ship.jpg
-:date: 2017-09-08
+:date: 2017-09-08 1:00
 :category: Examples
-:tags: Example, Article, Jumbo
+:tags: Jumbo
 :author: An Author
-:slug: jumbo-article
 :summary: Article summary paragraph. :language-la:`Lorem ipsum dolor sit amet,
     consectetur adipiscing elit. Aenean id elit posuere, consectetur magna
     congue, sagittis est.`

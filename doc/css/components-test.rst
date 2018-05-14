@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -31,6 +31,9 @@ Test
 
 .. role:: html(code)
     :language: html
+
+.. contents::
+    :class: m-block m-default
 
 Blocks
 ======
@@ -752,6 +755,76 @@ Tables
       </tbody>
     </table>
 
+Table with paragraphs
+---------------------
+
+.. raw:: html
+
+    <table class="m-table">
+      <tr>
+        <td>
+          <p>A paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices a erat eu suscipit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices a erat eu suscipit.</p>
+          <p>A second paragraph.</p>
+        </td>
+        <td>
+          <p>Another.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p>Another. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices a erat eu suscipit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices a erat eu suscipit.</p>
+        </td>
+        <td>
+          <p>A paragraph.</p>
+          <p>A second paragraph.</p>
+        </td>
+      </tr>
+    </table>
+
+`"Big" tables`_
+---------------
+
+.. raw:: html
+
+   <table class="m-table m-flat m-big">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="m-text-center m-text m-big m-thin">Community<br />edition</th>
+          <th class="m-text-center m-text m-big"><div class="m-text m-success">Premium<br />support</div></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="m-text-right"><span class="m-text m-dim">Support</span></td>
+          <td class="m-text-center">Community-based</td>
+          <td class="m-text-center"><strong class="m-text m-success">Guaranteed<br />response time</strong></td>
+        </tr>
+        <tr>
+          <td class="m-text-right"><span class="m-text m-dim">Commercial use</span></td>
+          <td class="m-text-center"><strong>Yes</strong><br /><span class="m-text m-small m-dim">MIT license</span></td>
+          <td class="m-text-center"><div class="m-text m-success"><strong>Yes</strong><br /><span class="m-text m-small m-dim">MIT license</span></div></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td class="m-text-right m-text-middle"><span class="m-text m-dim">Price</span></td>
+          <td><div class="m-button m-flat m-fullwidth">
+            <a href="#">
+              <div class="m-big">Free</div>
+              <div class="m-small">Get started</div>
+            </a>
+          </div></td>
+          <td><div class="m-button m-success m-fullwidth">
+            <a href="#">
+              <div class="m-big">Contact us</div>
+              <div class="m-small">big.boss@the.brand</div>
+            </a>
+          </div></td>
+        </tr>
+      </tfoot>
+    </table>
+
 Images
 ======
 
@@ -781,6 +854,34 @@ Image, fullwidth, link (yes, it should be pixelated):
 
     <div class="m-image m-fullwidth">
       <a href="http://blog.mosra.cz/"><img src="{filename}/static/flowers-small.jpg" /></a>
+    </div>
+
+SVG image:
+
+.. raw:: html
+
+    <svg class="m-image" width="80" height="80">
+      <text x="16" y="40" style="text-anchor: middle; fill: #ff0000">Hello</text>
+    </svg>
+
+SVG image, fullwidth, with link inside:
+
+.. raw:: html
+
+    <svg width="80" height="80" class="m-image m-fullwidth">
+      <a xlink:href="#"><text x="16" y="40" style="text-anchor: middle; fill: #ff0000">Hello</text></a>
+    </svg>
+
+SVG image, fullwidth, with link outside:
+
+.. raw:: html
+
+    <div class="m-image m-fullwidth">
+      <a href="#">
+        <svg width="80" height="80">
+          <text x="16" y="40" style="text-anchor: middle; fill: #ff0000">Hello</text>
+        </svg>
+      </a>
     </div>
 
 Figures
@@ -861,6 +962,64 @@ instead of extending the border and there should be proper padding on bottom):
       <figcaption>A Somewhat Lengthy Caption For A Photo</figcaption>
     </figure>
 
+Figures of varying colors:
+
+.. raw:: html
+
+    <div class="m-row">
+      <div class="m-col-m-3 m-col-s-6">
+        <figure class="m-figure m-default">
+          <img src="{filename}/static/ship-small.jpg" />
+          <figcaption>Default figure</figcaption>
+          <span>Text.</span>
+        </figure>
+      </div>
+      <div class="m-col-m-3 m-col-s-6">
+        <figure class="m-figure m-primary">
+          <img src="{filename}/static/ship-small.jpg" />
+          <figcaption>Primary figure</figcaption>
+          <span>Text.</span>
+        </figure>
+      </div>
+      <div class="m-col-m-3 m-col-s-6">
+        <figure class="m-figure m-success">
+          <img src="{filename}/static/ship-small.jpg" />
+          <figcaption>Success figure</figcaption>
+          <span>Text.</span>
+        </figure>
+      </div>
+      <div class="m-col-m-3 m-col-s-6">
+        <figure class="m-figure m-warning">
+          <img src="{filename}/static/ship-small.jpg" />
+          <figcaption>Warning figure</figcaption>
+          <span>Text.</span>
+        </figure>
+      </div>
+    </div>
+    <div class="m-row">
+      <div class="m-col-m-3 m-col-s-6">
+        <figure class="m-figure m-danger">
+          <img src="{filename}/static/ship-small.jpg" />
+          <figcaption>Danger figure</figcaption>
+          <span>Text.</span>
+        </figure>
+      </div>
+      <div class="m-col-m-3 m-col-s-6">
+        <figure class="m-figure m-info">
+          <img src="{filename}/static/ship-small.jpg" />
+          <figcaption>Info figure</figcaption>
+          <span>Text.</span>
+        </figure>
+      </div>
+      <div class="m-col-m-3 m-col-s-6">
+        <figure class="m-figure m-dim">
+          <img src="{filename}/static/ship-small.jpg" />
+          <figcaption>Dim figure</figcaption>
+          <span>Text.</span>
+        </figure>
+      </div>
+    </div>
+
 Image grid
 ==========
 
@@ -919,6 +1078,62 @@ Without link or caption:
       </div>
     </div>
 
+`Code in colored notes`_
+========================
+
+.. raw:: html
+
+    <div class="m-row">
+      <div class="m-col-m-6 m-col-s-12">
+        <div class="m-note m-default">
+          <p>Inline <code>code</code> in default note.</p>
+          <pre>and block code</pre>
+        </div>
+      </div>
+      <div class="m-col-m-6 m-col-s-12">
+        <div class="m-note m-primary">
+          <p>Inline <code>code</code> in primary note.</p>
+          <pre>and block code</pre>
+        </div>
+      </div>
+    </div>
+    <div class="m-row">
+      <div class="m-col-m-6 m-col-s-12">
+        <div class="m-note m-success">
+          <p>Inline <code>code</code> in success note.</p>
+          <pre>and block code</pre>
+        </div>
+      </div>
+      <div class="m-col-m-6 m-col-s-12">
+        <div class="m-note m-warning">
+          <p>Inline <code>code</code> in warning note.</p>
+          <pre>and block code</pre>
+        </div>
+      </div>
+    </div>
+    <div class="m-row">
+      <div class="m-col-m-6 m-col-s-12">
+        <div class="m-note m-danger">
+          <p>Inline <code>code</code> in danger note.</p>
+          <pre>and block code</pre>
+        </div>
+      </div>
+      <div class="m-col-m-6 m-col-s-12">
+        <div class="m-note m-info">
+          <p>Inline <code>code</code> in info note.</p>
+          <pre>and block code</pre>
+        </div>
+      </div>
+    </div>
+    <div class="m-row">
+      <div class="m-col-m-6 m-col-s-12">
+        <div class="m-note m-dim">
+          <p>Inline <code>code</code> in dim note.</p>
+          <pre>and block code</pre>
+        </div>
+      </div>
+    </div>
+
 `Code figure`_
 ==============
 
@@ -957,3 +1172,24 @@ Console figure:
     output</pre>
         And a description of that illegal crackery that's done above.
     </figure>
+
+List with components inside
+===========================
+
+.. raw:: html
+
+    <ul>
+      <li>
+        <p>A paragraph.</p>
+        <div class="m-note m-info">An info note.</div>
+      </li>
+      <li>
+        <div class="m-button m-primary"><a href="#">A button</a></div>
+      </li>
+      <li>
+        <p>Next item.</p>
+        <p>Next item next paragraph.</p>
+      </li>
+    </ul>
+
+    <p>Paragraph after.</p>

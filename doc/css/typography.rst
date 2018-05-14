@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -49,11 +49,10 @@ great by default.
 
 Each :html:`<p>` element inside :html:`<main>` has the first line indented, is
 justified and is separated from the following content by some padding. The
-:html:`<blockquote>` elements are, in addition, indented with a distinctive
-line on the left. Because the indentation may look distracting for manually
-wrapped line blocks, assign :css:`.m-poem` to such paragraph to indent all
-lines the same way. To remove the indentation and justification altogether, use
-:css:`.m-noindent`.
+:html:`<blockquote>` elements are indented with a distinctive line on the left.
+Because the indentation may look distracting for manually wrapped line blocks,
+assign :css:`.m-poem` to such paragraph to indent all lines the same way. To
+remove the indentation and justification altogether, use :css:`.m-noindent`.
 
 .. code-figure::
 
@@ -64,8 +63,9 @@ lines the same way. To remove the indentation and justification altogether, use
         aliquet nec consectetur in, mattis ac diam. Aliquam placerat justo ut purus
         interdum, ac placerat lacus consequat.</p>
 
-        <blockquote>Ut dictum enim posuere metus porta, et aliquam ex condimentum.
-        Proin sagittis nisi leo, ac pellentesque purus bibendum sit amet.</blockquote>
+        <blockquote><p>Ut dictum enim posuere metus porta, et aliquam ex condimentum.
+        Proin sagittis nisi leo, ac pellentesque purus bibendum sit
+        amet.</p></blockquote>
 
         <p class="m-poem">
         Curabitur<br/>
@@ -84,8 +84,9 @@ lines the same way. To remove the indentation and justification altogether, use
         aliquet nec consectetur in, mattis ac diam. Aliquam placerat justo ut purus
         interdum, ac placerat lacus consequat.</p>
 
-        <blockquote>Ut dictum enim posuere metus porta, et aliquam ex condimentum.
-        Proin sagittis nisi leo, ac pellentesque purus bibendum sit amet.</blockquote>
+        <blockquote><p>Ut dictum enim posuere metus porta, et aliquam ex condimentum.
+        Proin sagittis nisi leo, ac pellentesque purus bibendum sit
+        amet.</p></blockquote>
 
         <p class="m-poem">
         Curabitur<br/>
@@ -197,6 +198,45 @@ definitions.
           <dd>Finally put my pants on. Too late.</dd>
         </dl>
 
+The lists are compact by default, wrap item content in :html:`<p>` to make them
+inflated. Paragraphs in list items are neither indented nor justified.
+
+.. code-figure::
+
+    .. code:: html
+
+        <ul>
+          <li>
+            <p>Item 1, first paragraph.</p>
+            <p>Item 1, second paragraph.</p>
+          </li>
+          <li>
+            <p>Item 2</p>
+            <ol>
+              <li><p>An item</p></li>
+              <li><p>Another item</p></li>
+            </ol>
+          </li>
+          <li><p>Item 3</p></li>
+        </ul>
+
+    .. raw:: html
+
+        <ul>
+          <li>
+            <p>Item 1, first paragraph.</p>
+            <p>Item 1, second paragraph.</p>
+          </li>
+          <li>
+            <p>Item 2</p>
+            <ol>
+              <li><p>An item</p></li>
+              <li><p>Another item</p></li>
+            </ol>
+          </li>
+          <li><p>Item 3</p></li>
+        </ul>
+
 `Headings`_
 ===========
 
@@ -264,6 +304,12 @@ fancy transition, use :css:`.m-transition` on a paragraph.
         accumsan ante sit amet iaculis. Phasellus rhoncus hendrerit leo vitae lacinia.
         Maecenas iaculis dui ex, eu interdum lacus ornare sit amet.</p>
 
+.. note-info::
+
+    Transitions can be conveniently created with a :rst:`.. transition::`
+    directive in your :abbr:`reST <reStructuredText>` markup using the
+    `Pelican Components plugin <{filename}/plugins/components.rst#transitions>`_.
+
 `Preformatted blocks`_
 ======================
 
@@ -327,9 +373,10 @@ will have negative margin to make its contents aligned with surrounding text.
 =================
 
 Use :css:`.m-text-left`, :css:`.m-text-right` or :css:`.m-text-center` to
-align text inside its parent element. See
-`Floating around <{filename}/css/grid.rst#floating-around>`_ in the grid system
-for aligning and floating blocks in a similar way.
+align text inside its parent element. Use :css:`.m-text-top`,
+:css:`.m-text-middle` and :css:`.m-text-bottom` to align text vertically for
+example in a table cell. See `Floating around <{filename}/css/grid.rst#floating-around>`_
+in the grid system for aligning and floating blocks in a similar way.
 
 `Padding`_
 ==========
@@ -337,3 +384,6 @@ for aligning and floating blocks in a similar way.
 Block elements :html:`<p>`, :html:`<ol>`, :html:`<ul>`, :html:`<dl>`,
 :html:`<blockqote>`, :html:`<pre>` and :html:`<hr>` by default have :css:`1rem`
 padding after, except when they are the last child, to avoid excessive spacing.
+A special case is lists --- components directly inside :html:`<li>` elements
+have :css:`1rem` padding after, except when the :html:`<li>` is last, to
+achieve consistent spacing for inflated lists.

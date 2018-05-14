@@ -1,7 +1,7 @@
 #
 #   This file is part of m.css.
 #
-#   Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+#   Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 #
 #   Permission is hereby granted, free of charge, to any person obtaining a
 #   copy of this software and associated documentation files (the "Software"),
@@ -48,7 +48,7 @@ except ImportError:
     pyphen = None
 
 settings = {}
-words_re = re.compile("""\w+""", re.UNICODE|re.X)
+words_re = re.compile(r'\w+', re.UNICODE|re.X)
 
 # TODO: remove when 3.8 with https://github.com/getpelican/pelican/pull/2256
 # is released
@@ -71,6 +71,28 @@ def extract_document_language(document):
         if field[0][0] == 'lang': return str(field[1][0][0])
 
     return language
+
+def can_apply_typography(txtnode):
+    # Exclude:
+    #  - literals and spans inside literals
+    #  - raw code (such as SVG)
+    #  - field names
+    #  - bibliographic elements (author, date, ... fields)
+    if isinstance(txtnode.parent, nodes.literal) or \
+       isinstance(txtnode.parent.parent, nodes.literal) or \
+       isinstance(txtnode.parent, nodes.raw) or \
+       isinstance(txtnode.parent, nodes.field_name) or \
+       isinstance(txtnode.parent, nodes.Bibliographic):
+        return False
+
+    # From fields include only the ones that are in FORMATTED_FIELDS
+    if isinstance(txtnode.parent.parent, nodes.field_body):
+        field_name_index = txtnode.parent.parent.parent.first_child_matching_class(nodes.field_name)
+        if txtnode.parent.parent.parent[field_name_index][0] in settings['FORMATTED_FIELDS']:
+            return True
+        return False
+
+    return True
 
 class SmartQuotes(docutils.transforms.universal.SmartQuotes):
     """Smart quote transform
@@ -109,15 +131,14 @@ class SmartQuotes(docutils.transforms.universal.SmartQuotes):
                 continue
 
             # list of text nodes in the "text block":
-            # Patched here to exclude text spans inside literal nodes.
-            # Hopefully two nesting levels are enough.
-            txtnodes = [txtnode for txtnode in node.traverse(nodes.Text)
-                        if not isinstance(txtnode.parent,
-                                          nodes.option_string) and
-                           not isinstance(txtnode.parent,
-                                          nodes.literal) and
-                           not isinstance(txtnode.parent.parent,
-                                          nodes.literal)]
+            # Patched here to exclude more stuff.
+            txtnodes = []
+            for txtnode in node.traverse(nodes.Text):
+                if not can_apply_typography(txtnode): continue
+                # Don't convert -- in option strings
+                if isinstance(txtnode.parent, nodes.option_string): continue
+
+                txtnodes += [txtnode]
 
             # language: use typographical quotes for language "lang"
             lang = node.get_language_code(document_language)
@@ -169,27 +190,14 @@ class Pyphen(Transform):
 
         # Go through all text words and hyphenate them
         for node in self.document.traverse(nodes.TextElement):
-            # Skip preformatted text blocks, special elements and field names
-            if isinstance(node, (nodes.FixedTextElement, nodes.Special, nodes.field_name)):
+            # Skip preformatted text blocks and special elements
+            if isinstance(node, (nodes.FixedTextElement, nodes.Special)):
                 continue
 
             for txtnode in node.traverse(nodes.Text):
-                # Exclude:
-                #  - document title
-                #  - literals and spans inside literals
-                #  - raw code (such as SVG)
-                if isinstance(txtnode.parent, nodes.title) or \
-                   isinstance(txtnode.parent, nodes.literal) or \
-                   isinstance(txtnode.parent.parent, nodes.literal) or \
-                   isinstance(txtnode.parent, nodes.raw):
-                    continue
-
-                # From fields include only the ones that are in
-                # FORMATTED_FIELDS
-                if isinstance(txtnode.parent.parent, nodes.field_body):
-                    field_name_index = txtnode.parent.parent.parent.first_child_matching_class(nodes.field_name)
-                    if txtnode.parent.parent.parent[field_name_index][0] not in settings['FORMATTED_FIELDS']:
-                        continue
+                if not can_apply_typography(txtnode): continue
+                # Don't hyphenate document title
+                if isinstance(txtnode.parent, nodes.title): continue
 
                 # Useful for debugging, don't remove ;)
                 #print(repr(txtnode.parent), repr(txtnode.parent.parent), repr(txtnode.parent.parent.parent))
@@ -371,6 +379,27 @@ class SaneHtmlTranslator(HTMLTranslator):
             ('colwidths-given' not in node.parent.parent['classes'])):
             return
 
+    # Verbatim copied, removing the 'head' class from <th>
+    def visit_entry(self, node):
+        atts = {'class': []}
+        if node.parent.parent.parent.stubs[node.parent.column]:
+            # "stubs" list is an attribute of the tgroup element
+            atts['class'].append('stub')
+        if atts['class'] or isinstance(node.parent.parent, nodes.thead):
+            tagname = 'th'
+            atts['class'] = ' '.join(atts['class'])
+        else:
+            tagname = 'td'
+            del atts['class']
+        node.parent.column += 1
+        if 'morerows' in node:
+            atts['rowspan'] = node['morerows'] + 1
+        if 'morecols' in node:
+            atts['colspan'] = node['morecols'] + 1
+            node.parent.column += node['morecols']
+        self.body.append(self.starttag(node, tagname, '', **atts))
+        self.context.append('</%s>\n' % tagname.lower())
+
     # Don't put comments into the HTML output
     def visit_comment(self, node,
                       sub=re.compile('-(?=-)').sub):
@@ -511,6 +540,43 @@ class SaneHtmlTranslator(HTMLTranslator):
             self.body_pre_docinfo.extend(self.body)
             self.html_title.extend(self.body)
             del self.body[:]
+
+    # <ul>, <ol>, <dl> -- verbatim copied, removing "simple" class. For <ol>
+    # also removing the enumtype
+    def visit_bullet_list(self, node):
+        atts = {}
+        old_compact_simple = self.compact_simple
+        self.context.append((self.compact_simple, self.compact_p))
+        self.compact_p = None
+        self.compact_simple = self.is_compactable(node)
+        self.body.append(self.starttag(node, 'ul', **atts))
+
+    def depart_bullet_list(self, node):
+        self.compact_simple, self.compact_p = self.context.pop()
+        self.body.append('</ul>\n')
+
+    def visit_enumerated_list(self, node):
+        atts = {}
+        if 'start' in node:
+            atts['start'] = node['start']
+        self.body.append(self.starttag(node, 'ol', **atts))
+
+    def depart_enumerated_list(self, node):
+        self.body.append('</ol>\n')
+
+    def visit_definition_list(self, node):
+        classes = node.setdefault('classes', [])
+        self.body.append(self.starttag(node, 'dl'))
+
+    def depart_definition_list(self, node):
+        self.body.append('</dl>\n')
+
+    # no class="docutils" in <hr>
+    def visit_transition(self, node):
+        self.body.append(self.emptytag(node, 'hr'))
+
+    def depart_transition(self, node):
+        pass
 
 class _SaneFieldBodyTranslator(SaneHtmlTranslator):
     """

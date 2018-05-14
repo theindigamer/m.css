@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -30,7 +30,7 @@ m.css
 :cover: {filename}/static/cover.jpg
 :summary: A no-nonsense, no-JavaScript CSS framework and Pelican theme for
     content-oriented websites
-:navbar_brand_hidden: true
+:hide_navbar_brand: True
 :landing:
     .. container:: m-row
 
@@ -38,7 +38,7 @@ m.css
 
             .. raw:: html
 
-                <h1>m.css</h1>
+                <h1>m<span class="m-thin">.css</span></h1>
 
     .. container:: m-row
 

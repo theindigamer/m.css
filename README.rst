@@ -4,9 +4,13 @@ m.css
 *A no-nonsense, no-JavaScript CSS framework and Pelican theme for
 content-oriented websites.*
 
+.. image:: https://travis-ci.org/mosra/m.css.svg?branch=master
+    :target: https://travis-ci.org/mosra/m.css
+.. image:: https://codecov.io/gh/mosra/m.css/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/mosra/m.css
 .. image:: https://badges.gitter.im/mosra/m.css.svg
-   :alt: Join the chat at https://gitter.im/mosra/m.css
-   :target: https://gitter.im/mosra/m.css?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+    :alt: Join the chat at https://gitter.im/mosra/m.css
+    :target: https://gitter.im/mosra/m.css?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 Do you *hate* contemporary web development like I do? Do you also feel that
 it's not right for a web page to take *seconds* and *megabytes* to render? Do
@@ -48,52 +52,11 @@ possible.
 *Still not convinced?* Head over to a `detailed explanation <http://mcss.mosra.cz/why/>`_
 of this project goals and design decisions.
 
-BUILDING THE SITE
-=================
-
-**Note:** this is about building the m.css website itself, *not* about using
-m.css in your project. Check `the website <http://mcss.mosra.cz>`_ for end-user
-docs instead.
-
-The m.css website makes use of all the m.css features, which means that it also
-needs all the possible dependencies, combined. Sorry in advance :)
-
-On ArchLinux:
-
-.. code:: sh
-
-    sudo pacman -S texlive-most pelican python-pillow
-    cower -d python-pyphen # Build the python-pyphen package from AUR
-
-On Ubuntu you need these:
-
-.. code:: sh
-
-    sudo apt-get install texlive-base texlive-latex-extra texlive-fonts-extra
-    pip3 install pelican Pyphen Pillow
-
-Once you have all the dependencies, simply go to the ``site/`` subdirectory and
-start development server there. The live-reloading website will appear on
-http://localhost:8000.
-
-.. code:: sh
-
-    cd site
-    make devserver
-
-Publishing the website with ``make publish`` depends on a few patches that are
-not in any stable Pelican release yet (most importantly
-https://github.com/getpelican/pelican/pull/2246), in order to have them,
-install Pelican from my local fork instead:
-
-.. code:: sh
-
-    pip install git+https://github.com/mosra/pelican.git@mosra-master
-
 CONTRIBUTING
 ============
 
-Head over to the `contribution guide <CONTRIBUTING.rst>`_.
+Head over to the `contribution guide <CONTRIBUTING.rst>`_ to see how to make
+changes, verify the results and submit patches.
 
 CONTACT
 =======

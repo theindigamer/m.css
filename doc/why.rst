@@ -1,7 +1,7 @@
 ..
     This file is part of m.css.
 
-    Copyright © 2017 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2017, 2018 Vladimír Vondruš <mosra@centrum.cz>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -58,7 +58,7 @@ for.
 .. note-info::
 
     Well, while m.css itself doesn't *need* JavaScript, it doesn't prevent
-    *you* from using it -- put in as many jQueries as you want.
+    *you* from using it --- put in as many jQueries as you want.
 
 Why no CSS preprocessors?
 =========================
